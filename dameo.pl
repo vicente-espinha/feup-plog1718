@@ -324,7 +324,7 @@ checkEaten(Board,Player,X,Y,Reply):-
     ((X < 8, AuxX is X + 1, AuxY is Y;Y < 8, AuxY is Y + 1, AuxX is 1),!,checkEaten(Board,Player,AuxX,AuxY,Reply))
   ).
 
-
+%verifica se tem peças do adversario para comer
 checkNeighbours(Board,Player,X,Y):-
   (
     (AuxY is Y - 1, getPiece(Board,AuxY,X,Element), ((Player == 1,(Element == 2; Element == 4));(Player == 2,(Element == 1; Element == 3))), AuxY2 is Y - 2, getPiece(Board,AuxY2,X,Peca2), Peca2 == 0, retract(flagCheckEated(_)), FlagEat is 1, asserta(flagCheckEated(FlagEat)),true);
@@ -333,7 +333,7 @@ checkNeighbours(Board,Player,X,Y):-
     (AuxX is X - 1, getPiece(Board,Y,AuxX,Element), ((Player == 1,(Element == 2; Element == 4));(Player == 2,(Element == 1; Element == 3))), AuxX2 is X - 2, getPiece(Board,Y,AuxX2,Peca2), Peca2 == 0, retract(flagCheckEated(_)), FlagEat is 1, asserta(flagCheckEated(FlagEat)),true)
   ).
 
-
+%verifica se tem peças do adversario para comer
 checkKingNeighbours(Board,Player,X,Y):-
   (
     (loopKing(Board,Player,X,Y,0,1), flagKingEating(AuxY2), AuxY is AuxY2 - 1, retract(flagKingEating(_)), getPiece(Board,AuxY,X,Peca2), Peca2 == 0, retract(flagCheckEated(_)), FlagEat is 1, asserta(flagCheckEated(FlagEat)));
