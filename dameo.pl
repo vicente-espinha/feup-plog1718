@@ -156,7 +156,7 @@ askNewPiece(NewRow,NewCol):-
     write('Introduza a coluna da posicao a mover:'),
     getChar(NovaColuna_Letra),verifyColumn(NovaColuna_Letra,NewCol),!,
   repeat,
-    write('Introduza a nova linha da posicao a mover:'),
+    write('Introduza a linha da posicao a mover:'),
     getDigit(NewRow),verifyRow(NewRow),!.
 
 
@@ -201,7 +201,7 @@ validMovement(Player,Row,Col,NewRow,NewCol,Board,NewBoard,FlagNotPc):-
       (AuxDeltaLinha is DeltaLinha - 1, (DeltaColuna == 0, AuxDeltaColuna is 0; AuxDeltaColuna is DeltaColuna -1), checkSamePieces(Player,Row,Col,NewRow,NewCol,Board,AuxDeltaLinha, AuxDeltaColuna),NewBoard = Board)
     )
   );
-  ((FlagNotPc == 1, nl,write('Efetuou um moviento invalido'),nl,fail);fail).
+  ((FlagNotPc == 1, nl,write('Efetuou um movimento invalido'),nl,fail);fail).
 
 %verifica se entre a posição inicial e final estão apenas peças do jogador
 checkSamePieces(_,_,_,_,_,_,0,0).
