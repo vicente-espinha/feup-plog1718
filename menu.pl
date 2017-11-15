@@ -1,7 +1,7 @@
 :- consult(utilities).
 :- consult(dameo).
 
-% Menus 
+% Menus
 dameo :- clear,
   write('-----------------------------'),nl,
   write('            Dameo            '),nl,
@@ -65,15 +65,15 @@ display_all_pc(Board,Jogada):-
   get_code(_).
 
 
-info_jogada_pc(Type,Player,Row,Col,NewRow,NewCol):-
-  ((Col == 1, Letter is 'A');(Col == 2, Letter is 'B');
-  (Col == 3, Letter is 'C');(Col == 4, Letter is 'D');
-  (Col == 5, Letter is 'E');(Col == 6, Letter is 'F');
-  (Col == 7, Letter is 'G');(Col == 8, Letter is 'H')),
-  ((NewCol == 1, NewLetter is 'A');(NewCol == 2, NewLetter is 'B');
-  (NewCol == 3, NewLetter is 'C');(NewCol == 4, NewLetter is 'D');
-  (NewCol == 5, NewLetter is 'E');(NewCol == 6, NewLetter is 'F');
-  (NewCol == 7, NewLetter is 'G');(NewCol == 8, NewLetter is 'H')),
+displayPlayPc(Type,Player,Row,Col,NewRow,NewCol):-
+  ((Col == 1, Letter = 'A');(Col == 2, Letter = 'B');
+  (Col == 3, Letter = 'C');(Col == 4, Letter = 'D');
+  (Col == 5, Letter = 'E');(Col == 6, Letter = 'F');
+  (Col == 7, Letter = 'G');(Col == 8, Letter = 'H')),
+  ((NewCol == 1, NewLetter = 'A');(NewCol == 2, NewLetter = 'B');
+  (NewCol == 3, NewLetter = 'C');(NewCol == 4, NewLetter = 'D');
+  (NewCol == 5, NewLetter = 'E');(NewCol == 6, NewLetter = 'F');
+  (NewCol == 7, NewLetter = 'G');(NewCol == 8, NewLetter = 'H')),
   ((Player == 1, write('Jogaram as "o"'),nl);(Player == 2, write('Jogaram as "x"'),nl)),
   write('Jogada do Computador:'),nl,
   write('Posicao Inicial :'),nl,
