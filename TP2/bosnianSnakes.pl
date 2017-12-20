@@ -109,6 +109,8 @@ display_aux(Size):-
   Size1 is Size - 1,
   display_aux(Size1).
 
+/***********statistics*********/
+
 reset_timer:- statistics(walltime,_).
 
 print_time:-
