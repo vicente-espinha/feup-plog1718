@@ -16,10 +16,10 @@ start:-
     puzzle(SIZE,BOARD),
 
     %declaracao do dominio
-    domain(BOARD,0,9),
+    init_domain(BOARD),
 
     %declaracao de restricoes
-    around(BOARD,SIZE,1),
+    around(BOARD,SIZE,2),
 
     %pesquisa de solucoes
     reset_timer,
@@ -29,15 +29,23 @@ start:-
     print_time,
     fd_statistics.
 
+%predicado que inicia coloca as variaveis com dominio entre 0 e 1
+init_domain([]).
+init_domain([H|T]):-
+    init_domain(T),
+    ((var(H),
+    H in 0..1);true).
+
 
 /*************LOGIC****************/
 
 
 %around é o predicado que verifica se tem o numero de pintadas igual ao valor do numero
-around([],_,_).
-around([H|T],SIZE,I):-
+around(_,_,36).
+around(BOARD,SIZE,I):-
     NewI is I + 1,
-    around(T,SIZE,NewI),
+    around(BOARD,SIZE,NewI),
+    nth1(I,BOARD,H),
     ((nonvar(H),
     check_up(BOARD,SIZE,I,UP),
     check_down(BOARD,SIZE,I,DOWN),
