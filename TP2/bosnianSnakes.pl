@@ -8,7 +8,9 @@ B1,B2,B3,B4,B5,B6,
 C1,C2,C3,C4,6,C6,
 D1,6,D3,D4,D5,D6,
 E1,E2,E3,E4,E5,E6,
-F1,F2,F3,F4,F5,1],[_,2,_,_,1,_],[_,_,_,_,_,4]).
+F1,F2,F3,F4,F5,1],
+[_,2,_,_,1,_],
+[_,_,_,_,_,_]).
 
 
 start:-
@@ -20,9 +22,9 @@ start:-
 
     %declaracao de restricoes
     around(BOARD,SIZE,2),
-    %continues(BOARD,SIZE,1),
     vertical_restrictions(BOARD,SIZE,VERTICAL,1),
     horizontal_restrictions(BOARD,SIZE,HORIZONTAL,1),
+    continues(BOARD,SIZE,1),
 
     %pesquisa de solucoes
     reset_timer,
@@ -96,18 +98,38 @@ check_right_up(BOARD,SIZE,I,VALUE):-
 
 continues(_,_,36).
 continues(BOARD,SIZE,I):-
+    nth1(I,BOARD,VAR),
     (
-      nth1(I,BOARD,VAR),
       VAR \= 1,
       NewI is I + 1,
       continues(BOARD,SIZE,NewI)
-    );(VAR = 1,TotalSIZE is SIZE * SIZE,AUX is I mod SIZE,
+    );(VAR = 1,AUX is I mod SIZE,
     (
-      (AUX \= 0, V3 is I + 1,((V3 > TotalSIZE,RIGHT is 0);(nth1(V3,BOARD,RIGHT))),var(RIGHT),RIGHT #\= 0,continues(BOARD,SIZE,V3));
-      (V is I - SIZE ,((V < 1,UP is 0);(nth1(V,BOARD,UP))),var(UP),UP #\= 0,continues(BOARD,SIZE,V));
-      (V2 is I + SIZE,((V2 > TotalSIZE,DOWN is 0);(nth1(V2,BOARD,DOWN))),var(DOWN),DOWN #\=  0,continues(BOARD,SIZE,V2));
-      (AUX \= 1, V4 is I - 1,((V4 < 1,LEFT is 0);(nth1(V4,BOARD,LEFT))),var(LEFT),LEFT #\=  0,continues(BOARD,SIZE,V4))
-      ));true.
+      ((AUX \= 0, check_right_continues(BOARD,SIZE,I,RIGHT));RIGHT is 0),
+      ((check_up_continues(BOARD,SIZE,I,UP))),
+      ((check_down_continues(BOARD,SIZE,I,DOWN))),
+      ((AUX \= 1, check_left_continues(BOARD,SIZE,I,LEFT));LEFT is 0),
+      ((I \= 1,sum([RIGHT,UP,LEFT,DOWN],#=,2));sum([RIGHT,UP,LEFT,DOWN],#=,1)),
+      NewI is I + 1,
+      continues(BOARD,SIZE,NewI))
+      ).
+
+
+        check_down_continues(BOARD,SIZE,I,VALUE):-
+             V is I + SIZE,
+             ((V > SIZE * SIZE,VALUE is 0);(nth1(V,BOARD,AUX),((var(AUX),VALUE = AUX);(AUX =:= 1,VALUE is 1);VALUE is 0))).
+
+        check_right_continues(BOARD,SIZE,I,VALUE):-
+            V is I + 1,
+            ((V > SIZE * SIZE,VALUE is 0);(nth1(V,BOARD,AUX),((var(AUX),VALUE = AUX);(AUX =:= 1,VALUE is 1);VALUE is 0))).
+
+        check_up_continues(BOARD,SIZE,I,VALUE):-
+            V is I - SIZE,
+            ((V < 1,VALUE is 0);(nth1(V,BOARD,AUX),((var(AUX),VALUE = AUX);(AUX =:= 1,VALUE is 1); VALUE is 0))).
+
+        check_left_continues(BOARD,_,I,VALUE):-
+            V is I - 1,
+            ((V < 1,VALUE is 0);(nth1(V,BOARD,AUX),((var(AUX),VALUE = AUX);(AUX =:= 1,VALUE is 1);VALUE is 0))).
 
 
 /***************retrição vertical********/
@@ -121,7 +143,7 @@ vertical_restrictions(BOARD,SIZE,VERTICAL,ROW):-
 vertical_aux(BOARD,SIZE,ROW,LIST,1):-
   V is SIZE * ROW,
   nth1(V,BOARD,ELEM),
-  ((var(ELEM),append([],[ELEM],LIST));LIST is []).
+  ((var(ELEM),append([],[ELEM],LIST));append([],[],LIST)).
 
 vertical_aux(BOARD,SIZE,ROW,LIST,AUX):-
     NewAUX is AUX - 1,
@@ -140,7 +162,7 @@ horizontal_restrictions(BOARD,SIZE,HORIZONTAL,COL):-
     true).
 
 horizontal_aux(BOARD,_,COL,LIST,1):-
-  nth1(COL,BOARD,ELEM),((var(ELEM),append([],[ELEM],LIST));LIST is []).
+  nth1(COL,BOARD,ELEM),((var(ELEM),append([],[ELEM],LIST));append([],[],LIST)).
 
 horizontal_aux(BOARD,SIZE,COL,LIST,AUX):-
     NewAUX is AUX - 1,
