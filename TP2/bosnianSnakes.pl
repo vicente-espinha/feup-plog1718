@@ -38,12 +38,13 @@ start:-
 init_domain([]).
 init_domain([H|T]):-
     init_domain(T),
-    ((var(H),
-    H in 0..1);true).
+    (
+      (var(H),H in 0..1);
+      true
+    ).
 
 
 /*************LOGIC****************/
-
 
 %around é o predicado que verifica se tem o numero de pintadas igual ao valor do numero
 around(_,_,36).
@@ -65,37 +66,61 @@ around(BOARD,SIZE,I):-
 
 check_down(BOARD,SIZE,I,VALUE):-
      V is I + SIZE,
-     ((V > SIZE * SIZE,VALUE is 0);(nth1(V,BOARD,VALUE))).
+     (
+      (V > SIZE * SIZE,VALUE is 0);
+      (nth1(V,BOARD,VALUE))
+     ).
 
 check_right_down(BOARD,SIZE,I,VALUE):-
     V is I + SIZE + 1,
-    ((V > SIZE * SIZE,VALUE is 0);(nth1(V,BOARD,VALUE))).
+    (
+      (V > SIZE * SIZE,VALUE is 0);
+      (nth1(V,BOARD,VALUE))
+    ).
 
 check_left_down(BOARD,SIZE,I,VALUE):-
     V is I + SIZE - 1,
-    ((V > SIZE * SIZE,VALUE is 0);(nth1(V,BOARD,VALUE))).
+    (
+      (V > SIZE * SIZE,VALUE is 0);
+      (nth1(V,BOARD,VALUE))
+    ).
 
 check_right(BOARD,SIZE,I,VALUE):-
     V is I + 1,
-    ((V > SIZE * SIZE,VALUE is 0);(nth1(V,BOARD,VALUE))).
+    (
+      (V > SIZE * SIZE,VALUE is 0);
+      (nth1(V,BOARD,VALUE))
+    ).
 
 check_up(BOARD,SIZE,I,VALUE):-
     V is I - SIZE,
-    ((V < 1,VALUE is 0);(nth1(V,BOARD,VALUE))).
+    (
+      (V < 1,VALUE is 0);
+      (nth1(V,BOARD,VALUE))
+    ).
 
 check_left(BOARD,_,I,VALUE):-
     V is I - 1,
-    ((V < 1,VALUE is 0);(nth1(V,BOARD,VALUE))).
+    (
+      (V < 1,VALUE is 0);
+      (nth1(V,BOARD,VALUE))
+    ).
 
 check_left_up(BOARD,SIZE,I,VALUE):-
     V is I - SIZE - 1,
-    ((V < 1,VALUE is 0);(nth1(V,BOARD,VALUE))).
+    (
+      (V < 1,VALUE is 0);
+      (nth1(V,BOARD,VALUE))
+    ).
 
 check_right_up(BOARD,SIZE,I,VALUE):-
     V is I - SIZE + 1,
-    ((V < 1,VALUE is 0);(nth1(V,BOARD,VALUE))).
+    (
+      (V < 1,VALUE is 0);
+      (nth1(V,BOARD,VALUE))
+    ).
 
-
+%continues é o predicado que verifica a linha continua
 continues(_,_,36).
 continues(BOARD,SIZE,I):-
     nth1(I,BOARD,VAR),
@@ -114,22 +139,49 @@ continues(BOARD,SIZE,I):-
       continues(BOARD,SIZE,NewI))
       ).
 
+check_down_continues(BOARD,SIZE,I,VALUE):-
+   V is I + SIZE,
+   (
+      (V > SIZE * SIZE,VALUE is 0);
+      (nth1(V,BOARD,AUX),(
+          (var(AUX),VALUE = AUX);
+          (AUX =:= 1,VALUE is 1);
+          VALUE is 0)
+      )
+    ).
 
-        check_down_continues(BOARD,SIZE,I,VALUE):-
-             V is I + SIZE,
-             ((V > SIZE * SIZE,VALUE is 0);(nth1(V,BOARD,AUX),((var(AUX),VALUE = AUX);(AUX =:= 1,VALUE is 1);VALUE is 0))).
+check_right_continues(BOARD,SIZE,I,VALUE):-
+    V is I + 1,
+    (
+      (V > SIZE * SIZE,VALUE is 0);
+      (nth1(V,BOARD,AUX),(
+          (var(AUX),VALUE = AUX);
+          (AUX =:= 1,VALUE is 1);
+          VALUE is 0)
+      )
+    ).
 
-        check_right_continues(BOARD,SIZE,I,VALUE):-
-            V is I + 1,
-            ((V > SIZE * SIZE,VALUE is 0);(nth1(V,BOARD,AUX),((var(AUX),VALUE = AUX);(AUX =:= 1,VALUE is 1);VALUE is 0))).
+check_up_continues(BOARD,SIZE,I,VALUE):-
+    V is I - SIZE,
+    (
+      (V < 1,VALUE is 0);
+      (nth1(V,BOARD,AUX),(
+          (var(AUX),VALUE = AUX);
+          (AUX =:= 1,VALUE is 1);
+           VALUE is 0)
+      )
+    ).
 
-        check_up_continues(BOARD,SIZE,I,VALUE):-
-            V is I - SIZE,
-            ((V < 1,VALUE is 0);(nth1(V,BOARD,AUX),((var(AUX),VALUE = AUX);(AUX =:= 1,VALUE is 1); VALUE is 0))).
-
-        check_left_continues(BOARD,_,I,VALUE):-
-            V is I - 1,
-            ((V < 1,VALUE is 0);(nth1(V,BOARD,AUX),((var(AUX),VALUE = AUX);(AUX =:= 1,VALUE is 1);VALUE is 0))).
+check_left_continues(BOARD,_,I,VALUE):-
+    V is I - 1,
+    (
+      (V < 1,VALUE is 0);
+      (nth1(V,BOARD,AUX),(
+          (var(AUX),VALUE = AUX);
+          (AUX =:= 1,VALUE is 1);
+          VALUE is 0)
+      )
+    ).
 
 
 /***************retrição vertical********/
