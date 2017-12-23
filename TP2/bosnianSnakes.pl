@@ -2,7 +2,7 @@
 :-use_module(library(lists)).
 
 
-puzzle(6,
+puzzle6x6(6,
 [1,A2,A3,A4,A5,A6,
 B1,B2,B3,B4,B5,B6,
 C1,C2,C3,C4,6,C6,
@@ -13,9 +13,22 @@ F1,F2,F3,F4,F5,1],
 [_,_,_,_,_,_]).
 
 
-start:-
+puzzle5x5(5,
+[1,A2,A3,A4,A5,
+B1,B2,B3,7,B5,
+C1,C2,C3,C4,C5,
+D1,7,D3,D4,D5,
+F1,F2,F3,F4,1],
+[_,1,_,_,_],
+[_,_,3,_,_]).
+
+
+start(OPTION):-
     %declaracao de variaveis
-    puzzle(SIZE,BOARD,VERTICAL,HORIZONTAL),
+    (
+        (OPTION == 1,puzzle5x5(SIZE,BOARD,VERTICAL,HORIZONTAL));
+        (OPTION == 2,puzzle6x6(SIZE,BOARD,VERTICAL,HORIZONTAL))
+    ),
 
     %declaracao do dominio
     init_domain(BOARD),
@@ -29,10 +42,14 @@ start:-
     %pesquisa de solucoes
     reset_timer,
     labeling([ffc],BOARD),
+    display_horizontal(HORIZONTAL),
     display_aux(SIZE),
-    display_board(BOARD,SIZE,SIZE,SIZE),
+    display_board(BOARD,SIZE,SIZE,SIZE,VERTICAL),
     print_time,
-    fd_statistics.
+    fd_statistics,
+
+    nl,nl,write('Pressione qualquer tecla para voltar ao menu principal'),nl,
+    getDigit(_),bosnian_snakes.
 
 %predicado que inicia coloca as variaveis com dominio entre 0 e 1
 init_domain([]).
@@ -47,7 +64,7 @@ init_domain([H|T]):-
 /*************LOGIC****************/
 
 %around é o predicado que verifica se tem o numero de pintadas igual ao valor do numero
-around(_,_,36).
+around(_,SIZE,I):-TOTAL is SIZE * SIZE, I =:= TOTAL.
 around(BOARD,SIZE,I):-
     NewI is I + 1,
     around(BOARD,SIZE,NewI),
@@ -121,7 +138,7 @@ check_right_up(BOARD,SIZE,I,VALUE):-
     ).
 
 %continues é o predicado que verifica a linha continua
-continues(_,_,36).
+continues(_,SIZE,I):-TOTAL is SIZE * SIZE, I =:= TOTAL.
 continues(BOARD,SIZE,I):-
     nth1(I,BOARD,VAR),
     (
@@ -145,7 +162,7 @@ check_down_continues(BOARD,SIZE,I,VALUE):-
       (V > SIZE * SIZE,VALUE is 0);
       (nth1(V,BOARD,AUX),(
           (var(AUX),VALUE = AUX);
-          (AUX =:= 1,VALUE is 1);
+          (AUX == 1,VALUE is 1);
           VALUE is 0)
       )
     ).
@@ -156,7 +173,7 @@ check_right_continues(BOARD,SIZE,I,VALUE):-
       (V > SIZE * SIZE,VALUE is 0);
       (nth1(V,BOARD,AUX),(
           (var(AUX),VALUE = AUX);
-          (AUX =:= 1,VALUE is 1);
+          (AUX == 1,VALUE is 1);
           VALUE is 0)
       )
     ).
@@ -167,7 +184,7 @@ check_up_continues(BOARD,SIZE,I,VALUE):-
       (V < 1,VALUE is 0);
       (nth1(V,BOARD,AUX),(
           (var(AUX),VALUE = AUX);
-          (AUX =:= 1,VALUE is 1);
+          (AUX == 1,VALUE is 1);
            VALUE is 0)
       )
     ).
@@ -178,7 +195,7 @@ check_left_continues(BOARD,_,I,VALUE):-
       (V < 1,VALUE is 0);
       (nth1(V,BOARD,AUX),(
           (var(AUX),VALUE = AUX);
-          (AUX =:= 1,VALUE is 1);
+          (AUX == 1,VALUE is 1);
           VALUE is 0)
       )
     ).
@@ -228,21 +245,23 @@ horizontal_aux(BOARD,SIZE,COL,LIST,AUX):-
 
 /***************DISPLAY******************/
 
-display_board(_,_,_,0).
+display_board(_,_,_,0,_).
 
-display_board(Board,Size,0,Counter):-
+display_board(Board,Size,0,Counter,[V|T]):-
   Counter1 is Counter - 1,
-  write('|'),nl,
+  write('|'),
+  ((nonvar(V),format('~d',[V]));write(' ')),
+  nl,
   display_aux(Size),
   LineSize is Size,
-  display_board(Board,Size,LineSize,Counter1).
+  display_board(Board,Size,LineSize,Counter1,T).
 
-display_board([H|Tail],Size,LineSize,Counter):-
+display_board([H|Tail],Size,LineSize,Counter,VERTICAL):-
   Counter > 0,
   write('|'),
   write(H),
   Size1 is LineSize - 1,
-  display_board(Tail,Size,Size1,Counter).
+  display_board(Tail,Size,Size1,Counter,VERTICAL).
 
 display_aux(0):-nl.
 display_aux(Size):-
@@ -250,6 +269,12 @@ display_aux(Size):-
   write('--'),
   Size1 is Size - 1,
   display_aux(Size1).
+
+display_horizontal([]):-nl.
+display_horizontal([H|T]):-
+  ((nonvar(H),
+  format(' ~d',[H]));write('  ')),
+  display_horizontal(T).
 
 /***********statistics*********/
 
@@ -259,3 +284,48 @@ print_time:-
 	statistics(walltime,[_,T]),
 	TS is ((T//10)*10)/1000,
 	nl, write('Time:'), write(TS), write('s'), nl.
+
+/************MENUS*********************/
+
+bosnian_snakes :- clear,
+  write('-----------------------------'),nl,
+  write('        Bosnian Snakes       '),nl,
+  write('-----------------------------'),nl,
+  write('                             '),nl,
+  write('       1: Exemplo 5x5        '),nl,
+  write('       2: Exemplo 6x6        '),nl,
+  write('       3: Creditos           '),nl,
+  write('       4: Sair               '),nl,
+  write('                             '),nl,
+  write('-----------------------------'),nl,
+  menu_option.
+
+credits :- clear,
+  write('-----------------------------'),nl,
+  write('        Bosnian Snakes       '),nl,
+  write('-----------------------------'),nl,
+  write('                             '),nl,
+  write('         Luis Correia        '),nl,
+  write('        Vicente Espinha      '),nl,
+  write('                             '),nl,
+  write('-----------------------------'),nl,
+  nl,write('Pressione qualquer tecla para voltar ao menu principal'),nl,
+  getDigit(_),bosnian_snakes.
+
+menu_option:-write('Introduza a sua escolha'), nl,getDigit(INPUT),check_menu_option(INPUT).
+
+check_menu_option(INPUT):- (INPUT > 4 ; INPUT < 0), nl, write('Introduza uma opcao valida (1 a 4)'),nl ,nl, menu_option.
+check_menu_option(1):- start(1).
+check_menu_option(2):- start(2).
+check_menu_option(3):- credits.
+check_menu_option(4):- halt.
+
+/*********UTILITIES***********/
+
+% Clear screen
+clear :- write('\e[2J').
+
+% get input from user
+getNewLine:- get_code(T), (T == 10 -> ! ; getNewLine).
+getDigit(D):- get_code(Dt), D is Dt - 48, (Dt == 10 -> ! ; getNewLine).
+getChar(C):- get_char(C), char_code(C, Co), (Co == 10 -> ! ; getNewLine).
